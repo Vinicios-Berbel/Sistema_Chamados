@@ -6,7 +6,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +28,7 @@ public class User {
     private Department department;
 
     public User(Builder builder){
+        this.id = builder.id;
         this.identifier = builder.identifier;
         this.name = builder.name;
         this.email = builder.email;
@@ -38,12 +38,18 @@ public class User {
     }
 
     public static class Builder {
+        private UUID id;
         private Long identifier;
         private String name;
         private String email;
         private String password;
         private Department department;
         private UserRole userRole;
+
+        public Builder id(UUID id){
+            this.id = id;
+            return this;
+        }
 
         public Builder identifier(Long identifier){
             this.identifier = identifier;
@@ -78,6 +84,10 @@ public class User {
         public User build(){
             return new User(this);
         }
+    }
+
+    public UUID getId(){
+        return id;
     }
 
     public Long getIdentifier() {

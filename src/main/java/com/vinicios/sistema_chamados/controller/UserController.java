@@ -27,4 +27,9 @@ public class UserController {
     public ResponseEntity<User> create(@Valid @RequestBody CreateUserDTO user){
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{identifier}")
+    public ResponseEntity<User> delete(@PathVariable Long identifier){
+        return new ResponseEntity<>(userService.deleteUser(identifier), HttpStatus.NO_CONTENT);
+    }
 }

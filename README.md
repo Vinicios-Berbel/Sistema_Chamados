@@ -1,2 +1,2 @@
 # Sistema_Chamados
-Sistema de Gerenciamento de Chamados de TI para suporte técnico corporativo. Permite abertura, acompanhamento e resolução de solicitações com controle de status e priorização. Versão inicial em fase de desenvolvimento e testes.
+Sistema de gerenciamento de chamados de TI voltado ao suporte técnico corporativo, desenvolvido com o objetivo de aplicar e consolidar conhecimentos adquiridos em Java nos últimos meses. Projeto de caráter educacional, desenvolvido para aprofundar os conhecimentos em JDBC e banco de dados, servindo como base para uma futura atualização utilizando JPA e Spring.

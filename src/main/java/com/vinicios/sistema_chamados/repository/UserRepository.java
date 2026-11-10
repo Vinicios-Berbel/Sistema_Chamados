@@ -5,24 +5,27 @@ import com.vinicios.sistema_chamados.dto.CreateUserDTO;
 import com.vinicios.sistema_chamados.model.User;
 import com.vinicios.sistema_chamados.model.UserRole;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.net.ConnectException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class UserRepository {
     public static void save(User user){
-        String sql = "INSERT INTO users (id, identifier, name, email, password, user_role) VALUES ('%s', '%s', '%s', '%s', '%s', '%s')".formatted(UUID.randomUUID() ,user.getIdentifier() ,user.getName(), user.getEmail(), user.getPassword(), user.getUserRole());
+        String sql = "INSERT INTO users (id, identifier, name, email, password, user_role) VALUES (?, ?, ?, ?, ?, ?)";
 
         try(Connection conn = ConnectionFactory.getConnection();
-            Statement stmt = conn.createStatement()){
-            int rowAffected = stmt.executeUpdate(sql);
-            System.out.println(rowAffected);
-            conn.close();
-            stmt.close();
+            PreparedStatement stmt = conn.prepareStatement(sql);){
+            stmt.setObject(1, UUID.randomUUID());
+            stmt.setLong(2, user.getIdentifier());
+            stmt.setString(3, user.getName());
+            stmt.setString(4, user.getEmail());
+            stmt.setString(5, user.getPassword());
+            stmt.setString(6, String.valueOf(user.getUserRole()));
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected);
 
         }catch(SQLException e){
             e.printStackTrace();
@@ -33,8 +36,8 @@ public class UserRepository {
         String sql = "SELECT identifier, name, email, user_role FROM users";
 
         try(Connection conn = ConnectionFactory.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)){
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()){
 
             List<User> users = new ArrayList<>();
 
@@ -45,13 +48,42 @@ public class UserRepository {
             return users;
         }catch(SQLException e){
             e.printStackTrace();
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    public static User delete(UUID{
+    public static void delete(UUID id){
+        String sql = "DELETE FROM users WHERE id = ?";
 
+        try(Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);){
+
+            stmt.setObject(1,id);
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected);
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static User findByIdentifier(Long identifier){
+        String sql = "SELECT id, identifier, name, email, password, user_role FROM users WHERE identifier = ?";
+
+        try(Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ){
+            stmt.setLong(1, identifier);
+            try(ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    return new User.Builder().id((UUID) rs.getObject("id")).identifier(rs.getLong("identifier")).name(rs.getString("name")).email(rs.getString("email")).password(rs.getString("password")).userRole((UserRole.valueOf(rs.getString("user_role")))).department(null).build();
+                }
+                return null;
+            }
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }

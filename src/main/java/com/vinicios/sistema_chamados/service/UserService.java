@@ -41,10 +41,20 @@ public class UserService {
         return listUserDTO;
     }
 
+    public User deleteUser(long identifier){
+        User user = UserRepository.findByIdentifier(identifier);
+        UserRepository.delete(user.getId());
+        return user;
+    }
+
     public Long generateIdentifier(){
-        Long identifier = LISTIDENTIFIER.stream().mapToLong(Long::longValue).max().orElse(0L) + 1L;
-        LISTIDENTIFIER.add(identifier);
-        return identifier;
+        while(true){
+            Long identifier = LISTIDENTIFIER.stream().mapToLong(Long::longValue).max().orElse(0L) + 1L;
+            if(UserRepository.findByIdentifier(identifier) == null){
+                return identifier;
+            }
+            LISTIDENTIFIER.add(identifier);
+        }
     }
 
 
