@@ -1,8 +1,7 @@
 package com.vinicios.sistema_chamados.controller;
 
 import com.vinicios.sistema_chamados.dto.CreateUserDTO;
-import com.vinicios.sistema_chamados.dto.ListUserDTO;
-import com.vinicios.sistema_chamados.model.Department;
+import com.vinicios.sistema_chamados.dto.UserResponseDTO;
 import com.vinicios.sistema_chamados.model.User;
 import com.vinicios.sistema_chamados.service.UserService;
 import jakarta.validation.Valid;
@@ -19,17 +18,17 @@ public class UserController {
     UserService userService = new UserService();
 
     @GetMapping
-    public ResponseEntity<List<ListUserDTO>> listAll(){
+    public ResponseEntity<List<UserResponseDTO>> listAll(){
         return new ResponseEntity<>(userService.listUsers(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody CreateUserDTO user){
+    public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody CreateUserDTO user){
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{identifier}")
-    public ResponseEntity<User> delete(@PathVariable Long identifier){
+    public ResponseEntity<UserResponseDTO> delete(@PathVariable Long identifier){
         return new ResponseEntity<>(userService.deleteUser(identifier), HttpStatus.NO_CONTENT);
     }
 }

@@ -2,12 +2,11 @@ package com.vinicios.sistema_chamados.service;
 
 import com.vinicios.sistema_chamados.config.ValidationConfig;
 import com.vinicios.sistema_chamados.dto.CreateUserDTO;
-import com.vinicios.sistema_chamados.dto.ListUserDTO;
+import com.vinicios.sistema_chamados.dto.UserResponseDTO;
 import com.vinicios.sistema_chamados.model.User;
 import com.vinicios.sistema_chamados.model.UserRole;
 import com.vinicios.sistema_chamados.repository.UserRepository;
 import jakarta.validation.Validator;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class UserService {
     private final List<Long> LISTIDENTIFIER = new ArrayList<>();
 
-    public User createUser(CreateUserDTO createUserDTO){
+    public UserResponseDTO createUser(CreateUserDTO createUserDTO){
         Validator validator = ValidationConfig.getValidator();
         var validations = validator.validate(createUserDTO);
         if(!validations.isEmpty()){
@@ -25,26 +24,26 @@ public class UserService {
         try{
             User user = new User.Builder().identifier(generateIdentifier()).name(createUserDTO.name()).email(createUserDTO.email()).password(createUserDTO.password()).department(null).userRole(UserRole.valueOf(createUserDTO.userRole().toUpperCase())).build();
             UserRepository.save(user);
-            return user;
+            return new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), user.getDepartment().getName(), user.getUserRole());
         }catch (IllegalArgumentException e){
             e.printStackTrace();
             return null;
         }
     }
 
-    public List<ListUserDTO> listUsers(){
-        List<ListUserDTO> listUserDTO = new ArrayList<>();
+    public List<UserResponseDTO> listUsers(){
+        List<UserResponseDTO> userResponseDTO = new ArrayList<>();
         for(User user : UserRepository.findAll()){
-            ListUserDTO userDTO = new ListUserDTO(user.getIdentifier(), user.getName(), user.getEmail(), user.getUserRole(), null);
-            listUserDTO.add(userDTO);
+            UserResponseDTO userDTO = new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), null, user.getUserRole());
+            userResponseDTO.add(userDTO);
         }
-        return listUserDTO;
+        return userResponseDTO;
     }
 
-    public User deleteUser(long identifier){
+    public UserResponseDTO deleteUser(long identifier){
         User user = UserRepository.findByIdentifier(identifier);
         UserRepository.delete(user.getId());
-        return user;
+        return new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), user.getDepartment().getName(), user.getUserRole());
     }
 
     public Long generateIdentifier(){

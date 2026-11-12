@@ -1,4 +1,4 @@
-Maven
+
 
 HELP.md
 target/
@@ -9,19 +9,16 @@ Environment variables
 .env.*
 !.env.example
 
-Java
 
 *.class
 *.jar
 .war
 hs_err_pid
 
-Logs
 
 *.log
 logs/
 
-Spring Boot
 
 .springBeans
 

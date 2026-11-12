@@ -67,6 +67,10 @@ public class UserRepository {
         }
     }
 
+    public static User updateUser(UUID id){
+        return null;
+    }
+
     public static User findByIdentifier(Long identifier){
         String sql = "SELECT id, identifier, name, email, password, user_role FROM users WHERE identifier = ?";
 
