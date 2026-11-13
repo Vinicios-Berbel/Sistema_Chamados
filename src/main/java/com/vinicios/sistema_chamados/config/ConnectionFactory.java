@@ -3,12 +3,14 @@ package com.vinicios.sistema_chamados.config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class ConnectionFactory {
 
-    private static final String url = System.getenv("DB_URL");
-    private static final String user = System.getenv("DB_USER");
-    private static final String password = System.getenv("DB_PASSWORD");
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    private static final String url = dotenv.get("DB_URL");
+    private static final String user = dotenv.get("DB_USER");
+    private static final String password = dotenv.get("DB_PASSWORD");
 
     public static Connection getConnection(){
         try{

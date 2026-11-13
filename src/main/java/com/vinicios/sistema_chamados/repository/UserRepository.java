@@ -2,6 +2,7 @@ package com.vinicios.sistema_chamados.repository;
 
 import com.vinicios.sistema_chamados.config.ConnectionFactory;
 import com.vinicios.sistema_chamados.dto.CreateUserDTO;
+import com.vinicios.sistema_chamados.dto.UserUpdateDTO;
 import com.vinicios.sistema_chamados.model.User;
 import com.vinicios.sistema_chamados.model.UserRole;
 
@@ -67,8 +68,24 @@ public class UserRepository {
         }
     }
 
-    public static User updateUser(UUID id){
-        return null;
+    public static void updateUser(User user){
+        String sql = "UPDATE users SET name=?, email=?, password=?, user_role=? WHERE id=?";
+
+        try(Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPassword());
+            stmt.setString(4, String.valueOf(user.getUserRole()));
+            stmt.setObject(5, user.getId());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println(rowsAffected);
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public static User findByIdentifier(Long identifier){

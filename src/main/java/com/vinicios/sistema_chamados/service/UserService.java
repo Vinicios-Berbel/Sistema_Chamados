@@ -3,6 +3,7 @@ package com.vinicios.sistema_chamados.service;
 import com.vinicios.sistema_chamados.config.ValidationConfig;
 import com.vinicios.sistema_chamados.dto.CreateUserDTO;
 import com.vinicios.sistema_chamados.dto.UserResponseDTO;
+import com.vinicios.sistema_chamados.dto.UserUpdateDTO;
 import com.vinicios.sistema_chamados.model.User;
 import com.vinicios.sistema_chamados.model.UserRole;
 import com.vinicios.sistema_chamados.repository.UserRepository;
@@ -24,7 +25,7 @@ public class UserService {
         try{
             User user = new User.Builder().identifier(generateIdentifier()).name(createUserDTO.name()).email(createUserDTO.email()).password(createUserDTO.password()).department(null).userRole(UserRole.valueOf(createUserDTO.userRole().toUpperCase())).build();
             UserRepository.save(user);
-            return new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), user.getDepartment().getName(), user.getUserRole());
+            return new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), null, user.getUserRole());
         }catch (IllegalArgumentException e){
             e.printStackTrace();
             return null;
@@ -43,7 +44,18 @@ public class UserService {
     public UserResponseDTO deleteUser(long identifier){
         User user = UserRepository.findByIdentifier(identifier);
         UserRepository.delete(user.getId());
-        return new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), user.getDepartment().getName(), user.getUserRole());
+        return new UserResponseDTO(user.getIdentifier(), user.getName(), user.getEmail(), null, user.getUserRole());
+    }
+
+    public void updateUser(Long identifier, UserUpdateDTO userUpdateDTO){
+        User user = UserRepository.findByIdentifier(identifier);
+
+        user.setName(userUpdateDTO.name());
+        user.setEmail(userUpdateDTO.email());
+        user.setPassword(userUpdateDTO.password());
+        user.setUserRole(UserRole.valueOf(userUpdateDTO.userRole().toUpperCase()));
+
+        UserRepository.updateUser(user);
     }
 
     public Long generateIdentifier(){

@@ -2,6 +2,7 @@ package com.vinicios.sistema_chamados.controller;
 
 import com.vinicios.sistema_chamados.dto.CreateUserDTO;
 import com.vinicios.sistema_chamados.dto.UserResponseDTO;
+import com.vinicios.sistema_chamados.dto.UserUpdateDTO;
 import com.vinicios.sistema_chamados.model.User;
 import com.vinicios.sistema_chamados.service.UserService;
 import jakarta.validation.Valid;
@@ -30,5 +31,11 @@ public class UserController {
     @DeleteMapping("/{identifier}")
     public ResponseEntity<UserResponseDTO> delete(@PathVariable Long identifier){
         return new ResponseEntity<>(userService.deleteUser(identifier), HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{identifier}")
+    public ResponseEntity<Void> update(@PathVariable Long identifier, @RequestBody UserUpdateDTO user){
+        userService.updateUser(identifier, user);
+        return ResponseEntity.noContent().build();
     }
 }
